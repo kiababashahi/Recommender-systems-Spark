@@ -17,7 +17,6 @@ global_mean=training.agg({"rating":"avg"}).collect()[0][0]
 Movie_table=(training.groupBy("movieId").agg({'rating':'mean'}))
 user_table=training.groupBy("userId").agg({'rating':'mean'})
 df=ratings.join(Movie_table,"movieId")
-
 data=df.withColumnRenamed("avg(rating)","item-mean")
 df2=data.join(user_table,"userId").withColumnRenamed("avg(rating)","user-mean")
 newdf=df2.withColumn('user-item-interaction',df2['rating']-(df2['user-mean']+df2['item-mean']-global_mean))
