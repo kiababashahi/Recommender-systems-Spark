@@ -27,7 +27,7 @@ Movie_test_table=(test.join(Movie_table,"movieId")).withColumnRenamed("avg(ratin
 test_df=Movie_test_table.join(user_table,"userId").withColumnRenamed("avg(rating)","user-mean")
 
 als = ALS(maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="user-item-interaction",
-         coldStartStrategy="drop",rank=70)
+         coldStartStrategy="drop",rank=70, seed=int(rand_seed))
 model = als.fit(newdf)
 # Evaluate the model by computing the RMSE on the test data
 ##
