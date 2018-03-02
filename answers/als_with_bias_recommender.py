@@ -36,7 +36,7 @@ predictions=predictions.withColumn('evaluater',predictions['prediction']+predict
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
                                 predictionCol="evaluater")
 rmse = evaluator.evaluate(predictions)
-print("Root-mean-square error = " + str(rmse))
+print(rmse)
 
 
 

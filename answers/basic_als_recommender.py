@@ -23,7 +23,7 @@ predictions = model.transform(test)
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
                                 predictionCol="prediction")
 rmse = evaluator.evaluate(predictions)
-print("Root-mean-square error = " + str(rmse))
+print(rmse)
 
 # Generate top 10 movie recommendations for each user
 userRecs = model.recommendForAllUsers(10)

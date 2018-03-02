@@ -25,5 +25,5 @@ Pred=test.withColumn('globalAVG', lit(avg))
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
                                 predictionCol="globalAVG")
 rmse = evaluator.evaluate(Pred)
-print("Root-mean-square error = " + str(rmse))
+print(rmse)
 
