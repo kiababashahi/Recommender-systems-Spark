@@ -3,7 +3,7 @@ from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, SparkSession
 import sys
 rand_seed=sys.argv[1]
-file="..\data\sample_movielens_ratings.txt"
+file=".\data\sample_movielens_ratings.txt"
 spark=SparkSession.builder.master("local").appName("LAB2").getOrCreate()
 lines=spark.read.text(file).rdd
 parts = lines.map(lambda row: row.value.split("::"))
@@ -25,7 +25,3 @@ evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
 rmse = evaluator.evaluate(predictions)
 print(rmse)
 
-# Generate top 10 movie recommendations for each user
-userRecs = model.recommendForAllUsers(10)
-# Generate top 10 user recommendations for each movie
-movieRecs = model.recommendForAllItems(10)
