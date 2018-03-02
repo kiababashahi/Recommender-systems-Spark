@@ -6,3 +6,4 @@ def test_global_average():
     code=process.wait()
     assert(not code), "Command failed"
     assert(abs(float(process.stderr.read().decode("utf-8"))-1.77491694352)<0.01)
+    print(process.stderr.read())

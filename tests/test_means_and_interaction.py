@@ -7,4 +7,5 @@ def test_means_and_interaction():
                                stderr=subprocess.PIPE)
     code=process.wait()
     assert(not code), "Command failed"
-    assert(process.stderr.read().decode("utf-8")==open("tests/means_and_interaction.txt","r").read())
+    assert(process.stdout.read().decode("utf-8")==open("tests/means_and_interaction.txt","r").read())
+    print(process.stderr.read())
