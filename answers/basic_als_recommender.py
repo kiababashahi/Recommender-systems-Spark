@@ -3,7 +3,7 @@ from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, SparkSession
 import sys
 rand_seed=sys.argv[1]
-file="./data/sample_movielens_ratings.txt"
+file="../data/sample_movielens_ratings.txt"
 spark=SparkSession.builder.master("local").appName("LAB2").getOrCreate()
 lines=spark.read.text(file).rdd
 parts = lines.map(lambda row: row.value.split("::"))
