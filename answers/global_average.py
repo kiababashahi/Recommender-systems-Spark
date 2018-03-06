@@ -3,7 +3,7 @@ from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, SparkSession
 #mport sys
 #rand_seed=sys.argv[1]
-file="../data/sample_movielens_ratings.txt"
+file="./data/sample_movielens_ratings.txt"
 import sys
 rs=sys.argv[1]
 spark=SparkSession.builder.master("local").appName("LAB2").getOrCreate()
