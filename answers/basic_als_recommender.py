@@ -2,7 +2,7 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, SparkSession
 import sys
-rand_seed=sys.argv[1]
+rand_seed=int(sys.argv[1])
 file="./data/sample_movielens_ratings.txt"
 spark=SparkSession.builder.master("local").appName("LAB2").getOrCreate()
 lines=spark.read.text(file).rdd
@@ -15,7 +15,7 @@ ratings = spark.createDataFrame(ratingsRDD)
 # Build the recommendation model using ALS on the training data
 # Note we set cold start strategy to 'drop' to ensure we don't get NaN evaluation metrics
 als = ALS(maxIter=5, regParam=0.01, rank=70, userCol="userId", itemCol="movieId", ratingCol="rating",
-          coldStartStrategy="drop", seed=int(rand_seed))
+          coldStartStrategy="drop", seed=rand_seed)
 model = als.fit(training)
 
 # Evaluate the model by computing the RMSE on the test data
