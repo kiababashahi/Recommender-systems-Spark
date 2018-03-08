@@ -15,7 +15,7 @@ ratings = spark.createDataFrame(ratingsRDD)
 # Build the recommendation model using ALS on the training data
 # Note we set cold start strategy to 'drop' to ensure we don't get NaN evaluation metrics
 als = ALS(maxIter=5, regParam=0.01, rank=70, userCol="userId", itemCol="movieId", ratingCol="rating",
-          coldStartStrategy="drop", seed=rand_seed)
+          coldStartStrategy="drop", seed=int(rand_seed))
 model = als.fit(training)
 
 # Evaluate the model by computing the RMSE on the test data
