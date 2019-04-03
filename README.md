@@ -1,48 +1,140 @@
-# LA-template
+#  Recommender systems
 
-This repository is private in order to (1) encourage you to experiment
-various solutions without the fear of making mistakes publicly (2)
-discourage plagiarism, unauthorized collaboration and other offences
-under Concordia's [Academic Code of Conduct](http://www.concordia.ca/students/academic-integrity/offences.html). You are encouraged to
-discuss and exchange solutions during the lab sessions but you are
-*not allowed* to share code electronically.
 
-## Assignment submission
+### Preliminaries
+To begin, make sure you understand the example
+at http://spark.apache.org/docs/latest/ml-collaborative-filtering.html
+and that you can run it successfully. 
 
-To prepare and submit your assignment, you will:
-1. Ask your TA to give you access to the repository.
-2. Fork the repository on GitHub.
-3. In the settings of your fork, remove all contributors except (1) the course coordinator (username: `glatard`) (2) your TA. Failure to do so will be considered [unauthorized collaboration](http://www.concordia.ca/students/academic-integrity/offences.html) under Concordia's Academic Code of Conduct.
-4. Clone your fork and implement the assignment (see [specific instructions](./ASSIGNMENT.md)).
-5. Commit and push your solution to your fork.
-6. Release your fork on GitHub by the assignment due date. Any commit made after the due date will not be considered. 
 
-Your code will be tested with Python 3.5.1 and Apache Spark version 2.2.0. Your code will be tested on `orwell.encs.concordia.ca` (a computer representative of the lab workstations) after the following modules were loaded:
-* `module load spark`
-* `module load python/3.5.1`
+### Dataset
 
-Important note: you are not supposed to make a pull request from your
-fork to the TA's one. Doing so will result in your code being made
-publicly available among the other students, which will also be
-considered [unauthorized
-collaboration](http://www.concordia.ca/students/academic-integrity/offences.html)
-under Concordia's Academic Code of Conduct.
+We will use the MovieLens dataset sample provided with Spark and
+available in directory `data`.
 
-## Specific instructions
+### Basic ALS recommender
 
-Specific instructions to complete this assignment are available [here](./ASSIGNMENT.md).
+#### Task
 
-## Grading
+Write a script that prints the RMSE of recommendations obtained
+through ALS collaborative filtering, similarly to the example at
+http://spark.apache.org/docs/latest/ml-collaborative-filtering.html
+The training ratio must be 80% and the test ratio must be 20%. The
+random seed used to sample the training and test sets (passed to
+`DataFrame.randomSplit`) must be an argument of the script. The seed
+must also be used to initialize the ALS optimizer (use
+*ALS.setSeed()*). The following parameters must be used in the ALS
+optimizer:
+- maxIter: 5
+- rank: 70
+- regParam: 0.01
+- coldStartStrategy: 'drop'
 
-To grade your assignment, your TA will:
-1. Clone the latest release of your forked GitHub repository.
-2. Source the `env.sh` script: `source answers/env.sh`. Feel free to add any setup step to this script (e.g. if your solution requires environment variables).
-3. Install any dependency with `pip install -r requirements.txt --user`.
-4. Add undisclosed tests to directory `test`.
-5. Run `pytest`.
 
-Your grade will be determined from the number of passing tests as
-returned by pytest. For instance, if 11 tests have passed out of 13,
-your grade will be 84.6%.
+#### Required syntax
 
-You may want to run `pytest` in your fork to check the tests beforehand. To do that, you will have to install `pytest` using `pip install --user pytest ; setenv PATH ${PATH}:${HOME}/.local/bin`
+`basic_als_recommender.py <seed>`
+
+#### Test
+
+`tests/test_basic_als.py`
+
+### Global average rating
+
+#### Task
+
+Write a script that prints the global average rating for all users and
+all movies in the training set. Training and test
+sets should be determined as before.
+
+#### Required syntax
+
+`global_average.py`
+
+#### Test
+
+`tests/test_global_average.py`
+
+### Global-average-based recommender
+
+#### Task
+
+Write a script that prints the RMSE of recommendations obtained
+through global average, that is, the predicted rating for each
+user-movie pair must be the global average computed in the previous
+task. Training and test
+sets should be determined as before. You can add a column to an existing DataFrame with function *.withColumn(...)*.
+
+#### Required syntax
+
+`global_average_recommender.py <seed>`
+
+#### Test
+
+`tests/test_global_average_recommender.py`
+
+*Note:* compare the RMSEs obtained using the global-average
+ recommender and the ALS one. Our basic ALS recommender does not
+ perform well compared to the naive global-average
+ approach. Although ALS parameters might be optimized (for instance,
+ try increasing the number of max iterations or tuning the
+ regularization parameter), this is fundamentally due to the fact that
+ our current ALS method ignore user and item biases. In
+ the remainder we will improve the basic ALS method by taking user and
+ item biases into account.
+
+### User mean, item mean and user-item interaction
+
+#### Task
+
+Write a script that prints the *n* first elements of a DataFrame
+containing, for each (userId, movieId, rating) triple, the
+corresponding user mean (computed on the training set), item mean
+(computed on the training set) and user-item interaction *i* defined
+as *i=rating-(user_mean+item_mean-global_mean)*. *n* must be passed on
+the command line. The DataFrame must contain the following columns:
+
+- userId # as in the input file
+- movieId #  as in the input file
+- rating # as in the input file
+- user-mean # computed on the training set
+- item-mean # computed on the training set 
+- user-item-interaction # i = rating - (user_mean+item_mean-global_mean)
+
+Rows must be ordered by ascending userId and then by ascending movieId.
+
+ Training and test
+sets should be determined as before.
+
+#### Required syntax
+
+`means_and_interaction.py <seed> <n>`
+
+#### Test
+
+`tests/test_means_and_interaction.py`
+
+*Note*: you should reuse this DataFrame in the next task.
+
+### ALS with biases
+
+#### Task
+
+Write a script that prints the RMSE of recommendations obtained by
+predicting the user-item interaction *i* using ALS. Your ALS model
+should make predictions for *i* and the RMSE should be computed on the
+final ratings, computed as i+user_mean+item_mean-m (m is the global rating). Training and test
+sets should be determined as before. Your ALS model should use the
+same parameters as before and be initialized with the random seed
+passed on the command line.
+
+#### Required syntax
+
+`als_with_bias_recommender.py <seed>`
+
+#### Test
+
+`tests/test_als_with_bias_recommender.py`
+
+*Note:* compare the RMSE obtained here with the one obtained with the
+ basic ALS model. 
